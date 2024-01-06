@@ -1,0 +1,62 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    //입력
+    int N;
+    cin>>N;
+
+    priority_queue<int, vector<int>, greater<int>> big;
+    priority_queue<int, vector<int>, less<int>> small;
+    int temp;
+    vector<int> ans(N);
+
+    //연산
+    for(int i=1; i<=N; i++){
+        cin>>temp;
+        if(i==1){//pq가 비어있는 경우
+            small.push(temp);
+            big.push(temp);
+            ans[i-1]=temp;
+        }
+        else if (i==2){//pq가 비어있는 경우
+            if(temp>big.top()) {
+                big.pop();
+                big.push(temp);
+            }
+            else{
+                small.push(temp);
+                small.pop();
+            }
+            ans[i-1]=small.top();
+        }
+        else{
+            if(temp>big.top()) big.push(temp);//pq에 값 삽입
+            else small.push(temp);
+            int size=big.size()-small.size();
+            if(size>1) {//사이즈가 균형을 이루도록 조정
+                small.push(big.top());
+                big.pop();
+            }
+            else if(size<-1){//사이즈가 균형을 이루도록 조정
+                big.push(small.top());
+                small.pop();
+            }
+            //조건에 따라 정답 벡터에 중간값 저장
+            if(i%2==0) ans[i-1]=small.top();
+            else{
+                if(small.size()==i/2+1) ans[i-1]=small.top();
+                else ans[i-1]=big.top();
+            }
+        }
+    }
+    //출력
+    for(int i=0; i<N; i++){
+        cout<<ans[i]<<"\n";
+    }
+    
+    return 0;
+}
